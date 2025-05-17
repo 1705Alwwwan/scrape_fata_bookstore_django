@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Book Scraper</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Books to Scrape (Static Snapshot)</h1>
+    <p>Average Price: £{{ avg_price|floatformat:2 }}</p>
+
+    <h2>Rating Summary:</h2>
+    <ul>
+        {% for r in rating_count %}
+            <li>{{ r.rating }}: {{ r.count }}</li>
+        {% endfor %}
+    </ul>
+
+    <canvas id="ratingChart" width="400" height="200"></canvas>
+
+    <script>
+        const ctx = document.getElementById('ratingChart').getContext('2d');
+        const chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: {{ rating_labels|safe }},
+                datasets: [{
+                    label: 'Jumlah Buku per Rating',
+                    data: {{ rating_values|safe }},
+                    backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+    </script>
+
+    <h2>Books:</h2>
+    <ul>
+        {% for book in books %}
+            <li>
+                <a href="{{ book.link }}">{{ book.title }}</a> -
+                £{{ book.price }} -
+                {{ book.rating }} -
+                {{ book.availability }}
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
